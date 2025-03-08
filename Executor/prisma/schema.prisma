@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql" / "sqlite" depending on your DB
+  url      = env("DATABASE_URL")
+}
+
+model Issue {
+  id        Int       @id @default(autoincrement())
+  githubId  BigInt    @unique // GitHub issue ID
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  githubId  BigInt    @unique // GitHub comment ID
+  issueId   Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  parsedAt  DateTime? // Last time this comment was parsed
+  issue     Issue     @relation(fields: [issueId], references: [id])
+}
+
+model Discussion {
+  id        Int                 @id @default(autoincrement())
+  githubId  String              @unique // GitHub discussion ID
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  comments  DiscussionComment[]
+}
+
+model DiscussionComment {
+  id           Int        @id @default(autoincrement())
+  githubId     String     @unique // GitHub discussion comment ID
+  discussionId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  discussion   Discussion @relation(fields: [discussionId], references: [id])
+}
+
+model JiraIssues {
+  id                 Int      @id @default(autoincrement())
+  jiraId             String   @unique // Jira Issue ID
+  projectKey         String
+  projectDescription String?
+  projectTitle       String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  comments JiraComments[] // One-to-many relation with comments
+}
+
+model JiraComments {
+  id          Int    @id @default(autoincrement())
+  jiraId      String @unique // Jira Comment ID
+  projectKey  String
+  commentBody String
+
+  issueId Int // Foreign key for relation
+  issue   JiraIssues @relation(fields: [issueId], references: [id])
+}
