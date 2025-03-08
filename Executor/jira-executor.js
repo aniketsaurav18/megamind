@@ -1,12 +1,14 @@
+import dotenv from "dotenv"
+dotenv.config()
 import axios from 'axios';
 import prisma from './db.js';
 import { storeChunkedTextEmbeddings } from './embedder.js';
 
 // Configuration - replace these with your actual values
-const JIRA_BASE_URL = 'https://megamind-mitsogo.atlassian.net';
-const PROJECT_KEY = 'PROJ';
-const USERNAME = 'sauravtest.mitsogo@gmail.com';
-const API_TOKEN = 'ATATT3xFfGF0_bpIE3JpqVXVDoNhgZy7Ed_zu2imZ46ONm8nfooh1wcN1EixGUP7sdKnJQu-QYKuYceDoB3PSaZhwRv1b3jxBmjl9dh-AGHFSO0f2D4d14TNy5NIkgD4vrTqCYUXbLa9C9VS3j4VHgQTWqz640JhdoxktlBxqhX88hF1x4_Pogc=90B52035';
+const JIRA_BASE_URL = process.env.JIRA_URL;
+const PROJECT_KEY = process.env.JIRA_PROJECT;
+const USERNAME = process.env.JIRA_USERNAME;
+const API_TOKEN = process.env.JIRA_API_TOKEN;
 
 const auth = {
   username: USERNAME,
@@ -61,7 +63,9 @@ function extractCommentText(comment) {
   return commentText.trim(); // Remove leading/trailing whitespace
 }
 
-export async function getJiraIssuesAndComments(baseUrl, projectKey) {
+export async function getJiraIssuesAndComments() {
+  const baseUrl = JIRA_BASE_URL;
+  const projectKey = PROJECT_KEY;
   const searchUrl = `${baseUrl}/rest/api/3/search`;
 
   // Initial parameters

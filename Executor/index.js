@@ -2,7 +2,6 @@ import cron from "node-cron";
 import { processGitHubData } from "./github2.js"; 
 import { getJiraIssuesAndComments } from "./jira-executor.js";
 
-
 export async function runCronJob() {
     try {
         await Promise.all([
@@ -14,6 +13,10 @@ export async function runCronJob() {
         console.error(`[${new Date().toISOString()}] Error running cron job:`, error);
     }
 }
+
+// Run the job immediately when the script starts
+console.log("Running cron job immediately on startup...");
+runCronJob();
 
 // Schedule the job to run every hour
 cron.schedule("0 * * * *", () => {
