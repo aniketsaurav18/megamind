@@ -5,8 +5,8 @@ dotenv.config();
 import prisma from './db.js';
 import { storeChunkedTextEmbeddings } from './embedder.js';
 
-const owner = 'twbs'; // GitHub repository owner
-const repo = 'bootstrap'; // GitHub repository name
+const owner = process.env.GITHUB_USERNAME || 'twbs'; // GitHub repository owner
+const repo = process.env.GITHUB_REPO || 'bootstrap'; // GitHub repository name
 const githubToken = process.env.GITHUB_TOKEN; // GitHub Token (Required for GraphQL API)
 
 const octokit = new Octokit({ auth: githubToken });
